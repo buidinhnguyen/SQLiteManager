@@ -6,5 +6,5 @@ Pod::Spec.new do |s|
   s.homepage = 'https://github.com/buidinhnguyen/SQLiteManager'
   s.source   = { :git => 'https://github.com/buidinhnguyen/SQLiteManager.git', :tag => s.version.to_s }
   s.source_files = 'SQLiteManager/*.{h,m}'
-  s.requires_arc = true
+  s.requires_arc = false
 end
