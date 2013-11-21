@@ -8,5 +8,4 @@ Pod::Spec.new do |s|
   s.source   = { :git => 'https://github.com/buidinhnguyen/SQLiteManager.git', :tag => s.version.to_s }
   s.source_files = 'SQLiteManager/*.{h,m}'
   s.requires_arc = false
-  s.libraries = 'libsqlite3.dylib'
 end
