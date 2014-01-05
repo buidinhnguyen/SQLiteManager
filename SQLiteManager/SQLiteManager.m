@@ -15,7 +15,7 @@ static SQLiteManager * sharedSQLiteManager = nil;
     @synchronized([SQLiteManager class])
 	{
 		if (!sharedSQLiteManager){
-            [[self alloc] init];
+            [[self alloc] initInternal];
         }
 		return sharedSQLiteManager;
 	}
@@ -34,10 +34,14 @@ static SQLiteManager * sharedSQLiteManager = nil;
     return self;
 }
 #pragma SQL : init
--(id)init {
+- (id) init {
+    NSAssert(0, @"Attempted to allocate a second instance of a singleton.");
+    return nil;
+}
+-(id)initInternal {
 	self = [super init];
 	if (self != nil) {
-        NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
         NSString *documentsDir = [documentPaths objectAtIndex:0];
         self.databasePath = [documentsDir stringByAppendingPathComponent:databaseName];
 		[self checkAndCreateDatabaseWithOverwrite:NO];
