@@ -41,9 +41,25 @@ static SQLiteManager * sharedSQLiteManager = nil;
 -(id)initInternal {
 	self = [super init];
 	if (self != nil) {
-        NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-        NSString *documentsDir = [documentPaths objectAtIndex:0];
-        self.databasePath = [documentsDir stringByAppendingPathComponent:databaseName];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,NSUserDomainMask,YES);
+        if ([paths count] == 0)
+            return nil;
+        
+        BOOL success;
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSError *error;
+        
+        NSString *path = [paths objectAtIndex:0];
+        NSString *appBundleID = [[NSBundle mainBundle] bundleIdentifier];
+        NSString *appDataDir = [path stringByAppendingPathComponent:appBundleID];
+        
+        success = [fileManager createDirectoryAtPath:appDataDir withIntermediateDirectories:YES
+                                          attributes:nil error:&error];
+        if (!success) {
+            NSAssert1(0, @"Failed to create directory in Application Support with message '%@'.", [error localizedDescription]);
+        }
+        
+        self.databasePath = [appDataDir stringByAppendingPathComponent:databaseName];
 		[self checkAndCreateDatabaseWithOverwrite:NO];
 	}
 	return self;
