@@ -221,9 +221,17 @@ static SQLiteManager * sharedSQLiteManager = nil;
         sqlite3_stmt *compiledStatement;
         if(sqlite3_prepare_v2(database, sqlStatement, -1, &compiledStatement, NULL) == SQLITE_OK) {
 			int index = 1;
-			for (NSString * value in values) {
-				if( [[NSScanner scannerWithString:(NSString *)value] scanFloat:NULL] ){
+			for (id value in values) {
+				/*
+                if( [[NSScanner scannerWithString:(NSString *)value] scanFloat:NULL] ){
 					sqlite3_bind_int(compiledStatement, index, [(NSString*)value intValue]);
+				}
+                else {
+					sqlite3_bind_text(compiledStatement, index, [(NSString *)value UTF8String], -1, SQLITE_TRANSIENT);
+				}
+                 */
+                if([value isKindOfClass:[NSNumber class]]){
+					sqlite3_bind_double(compiledStatement, index, [value doubleValue]);
 				}
                 else {
 					sqlite3_bind_text(compiledStatement, index, [(NSString *)value UTF8String], -1, SQLITE_TRANSIENT);
