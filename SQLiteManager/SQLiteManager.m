@@ -4,6 +4,7 @@
 //  Created by Anthony Ly on 11/03/12.
 //  Copyright (c) 2012 AnthonyLy.com. All rights reserved.
 //
+// Contribution: Nguyen Bui, Left Mobile
 
 #import "SQLiteManager.h"
 
@@ -146,6 +147,7 @@ static SQLiteManager * sharedSQLiteManager = nil;
     NSString *selectFromWhere = @"SELECT %@ FROM %@ WHERE %@";
     NSString *selectFromWhereOrder = @"SELECT %@ FROM %@ WHERE %@ ORDER BY %@";
     NSString *selectFromWhereOrderLimit = @"SELECT %@ FROM %@ WHERE %@ ORDER BY %@ LIMIT %@";
+    NSString *selectFromWhereLimit = @"SELECT %@ FROM %@ WHERE %@ LIMIT %@";
     NSString * sql;
     if (field == nil) {
         field = @"*";
@@ -155,13 +157,31 @@ static SQLiteManager * sharedSQLiteManager = nil;
     }
     if (order != nil && limit != nil) {
         sql = [NSString stringWithFormat:selectFromWhereOrderLimit,field, table, condition, order, limit];
-    }else if(order == nil && limit != nil){
+    }
+    else if(order == nil && limit != nil){
+        // Nguyen: fix, 2014Jan19
+        sql = [NSString stringWithFormat:selectFromWhereLimit,field, table, condition, limit];
+    }
+    else if(order != nil && limit == nil){
+        // Nguyen: fix, 2014Jan19
         sql = [NSString stringWithFormat:selectFromWhereOrder,field, table, condition, order];
-    }else{
+    }
+    else{
         sql = [NSString stringWithFormat:selectFromWhere,field, table, condition];
     }
     return [self _find:sql];
 }
+
+// Nguyen Bui, 2014Jan19
+-(NSDictionary*)findById:(int)idRow from:(NSString *)table {
+    NSArray *arr = [self find:nil from:table where:[NSString stringWithFormat:@"id=%d", idRow]];
+    if([arr count] > 0) {
+        return [arr objectAtIndex:0];
+    }
+    
+    return nil;
+}
+
 #pragma SQL : DELETE
 -(BOOL)deleteRowWithId:(int)idRow from:(NSString *)table{
     sqlite3 *database;
@@ -230,6 +250,7 @@ static SQLiteManager * sharedSQLiteManager = nil;
 					sqlite3_bind_text(compiledStatement, index, [(NSString *)value UTF8String], -1, SQLITE_TRANSIENT);
 				}
                  */
+                // Nguyen: 2014 Jan 18
                 if([value isKindOfClass:[NSNumber class]]){
 					sqlite3_bind_double(compiledStatement, index, [value doubleValue]);
 				}
