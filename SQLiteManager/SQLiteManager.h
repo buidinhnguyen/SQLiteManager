@@ -26,7 +26,7 @@
 -(NSArray *)find:(NSString *)field from:(NSString *)table where:(NSString *)condition;
 -(NSArray *)find:(NSString *)field from:(NSString *)table where:(NSString *)condition order:(NSString *)order limit:(NSString *)limit;
 -(NSDictionary*)findById:(int)idRow from:(NSString *)table;
--(BOOL)save:(NSMutableDictionary *)data into:(NSString *)table;
+-(BOOL)save:(NSMutableDictionary *)data into:(NSString *)table forceInsert:(BOOL) forceInsert;
 -(BOOL)deleteRowWithId:(int)idRow from:(NSString *)table;
 -(id)executeSql:(NSString *)sql;
 

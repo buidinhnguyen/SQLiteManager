@@ -207,13 +207,13 @@ static SQLiteManager * sharedSQLiteManager = nil;
     }
 }
 #pragma SQL : SAVE/UPDATE
--(BOOL)save:(NSMutableDictionary *)data into:(NSString *)table{
+-(BOOL)save:(NSMutableDictionary *)data into:(NSString *)table forceInsert:(BOOL) forceInsert {
     sqlite3 *database;
     if(sqlite3_open([databasePath UTF8String], &database) == SQLITE_OK) {
         NSArray *keys = [data allKeys];
 		NSArray *values = [data allValues];
         NSString * sql;
-        if ([data valueForKey:@"id"] != nil) {
+        if ([data valueForKey:@"id"] != nil && !forceInsert) {
             int idUpdate = [[data valueForKey:@"id"] intValue];
             NSString *updateSql = @"";
             for (NSString *key in keys) {
